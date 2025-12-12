@@ -4,7 +4,7 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Twibbon PSB Mabash</title>
+  <title>Twibbon Generator</title>
   <script src="/_sdk/element_sdk.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -56,8 +56,8 @@
    <div class="min-h-full w-full" id="main-wrapper">
     <div class="max-w-4xl mx-auto px-6 py-12"><!-- Header -->
      <div class="text-center mb-8">
-      <h1 id="main-title" class="text-4xl font-bold mb-2 text-white">TWIBBON</h1>
-      <p id="subtitle" class="text-xl text-white">Penerimaan Santri Baru SMP-SMAS Tahfidz Al-Quran Wahdah Islamiyah Anabanua</p>
+      <h1 id="main-title" class="text-4xl font-bold mb-2 text-white">Selamat Datang Mahasiswa Baru</h1>
+      <p id="subtitle" class="text-xl text-white">Universitas Indonesia 2024</p>
      </div><!-- Instruction -->
      <p id="instruction" class="text-center text-base mb-8 text-white">Upload foto Anda dan download twibbon untuk dibagikan di media sosial!</p><!-- Preview Container -->
      <div class="mb-8">
@@ -65,7 +65,7 @@
               GANTI LINK TEMPLATE TWIBBON DI BAWAH INI
               Cara: Copy path file PNG template Anda, lalu paste di src=""
               Contoh: src="./template-twibbon.png" atau src="https://example.com/twibbon.png"
-            --> <img id="twibbon-frame" src="./Twibbonppdb.png" alt="Frame Twibbon" onerror="this.src=''; this.alt='Template gagal dimuat. Pastikan file ada di folder yang sama dengan HTML ini.';">
+            --> <img id="twibbon-frame" src="./coming soon_20251212_040956_0000.png" alt="Frame Twibbon" onerror="this.src=''; this.alt='Template gagal dimuat. Pastikan file ada di folder yang sama dengan HTML ini.';">
        <div id="placeholder" class="absolute inset-0 flex items-center justify-center text-center p-8 bg-gray-100">
         <div><i class="fas fa-image text-6xl text-gray-400 mb-4"></i>
          <p class="text-lg font-semibold text-gray-700">Upload Foto Anda</p>
@@ -243,10 +243,7 @@
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       
-      const size = 1000;
-      canvas.width = size;
-      canvas.height = size;
-      
+      // Load foto user terlebih dahulu untuk mendapatkan dimensi aslinya
       const photoImg = new Image();
       photoImg.src = userPhoto.src;
       
@@ -254,8 +251,7 @@
         photoImg.onload = resolve;
       });
       
-      ctx.drawImage(photoImg, 0, 0, size, size);
-      
+      // Load frame twibbon untuk mendapatkan dimensi aslinya
       const frameImg = new Image();
       frameImg.src = document.getElementById('twibbon-frame').src;
       
@@ -263,7 +259,34 @@
         frameImg.onload = resolve;
       });
       
-      ctx.drawImage(frameImg, 0, 0, size, size);
+      // Gunakan ukuran yang lebih besar antara foto atau frame untuk kualitas terbaik
+      const targetSize = Math.max(photoImg.width, photoImg.height, frameImg.width, frameImg.height, 1080);
+      
+      canvas.width = targetSize;
+      canvas.height = targetSize;
+      
+      // Gambar foto user (dengan crop center untuk mempertahankan proporsi)
+      const photoAspect = photoImg.width / photoImg.height;
+      let drawWidth, drawHeight, offsetX, offsetY;
+      
+      if (photoAspect > 1) {
+        // Foto landscape
+        drawHeight = targetSize;
+        drawWidth = drawHeight * photoAspect;
+        offsetX = -(drawWidth - targetSize) / 2;
+        offsetY = 0;
+      } else {
+        // Foto portrait atau square
+        drawWidth = targetSize;
+        drawHeight = drawWidth / photoAspect;
+        offsetX = 0;
+        offsetY = -(drawHeight - targetSize) / 2;
+      }
+      
+      ctx.drawImage(photoImg, offsetX, offsetY, drawWidth, drawHeight);
+      
+      // Gambar frame twibbon di atas foto
+      ctx.drawImage(frameImg, 0, 0, targetSize, targetSize);
       
       canvas.toBlob((blob) => {
         const url = URL.createObjectURL(blob);
@@ -275,5 +298,5 @@
       }, 'image/png');
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9acd94085580294b',t:'MTc2NTU0NjI0Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9acda03563b7fd15',t:'MTc2NTU0Njc0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
