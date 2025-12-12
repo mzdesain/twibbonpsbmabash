@@ -1,0 +1,279 @@
+<!-- GANTI LINK TEMPLATE TWIBBON DI BAWAH INI -->
+<!doctype html>
+<html lang="id" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Twibbon PSB Mabash</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    #preview-container {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      aspect-ratio: 1;
+      margin: 0 auto;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid #e5e7eb;
+    }
+    
+    #user-photo {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    #twibbon-frame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+      z-index: 10;
+    }
+    
+    .hidden {
+      display: none;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full" style="background: linear-gradient(135deg, #ffbf00 0%, #002899 100%);">
+  <div class="w-full h-full overflow-auto">
+   <div class="min-h-full w-full" id="main-wrapper">
+    <div class="max-w-4xl mx-auto px-6 py-12"><!-- Header -->
+     <div class="text-center mb-8">
+      <h1 id="main-title" class="text-4xl font-bold mb-2 text-white">TWIBBON</h1>
+      <p id="subtitle" class="text-xl text-white">Penerimaan Santri Baru SMP-SMAS Tahfidz Al-Quran Wahdah Islamiyah Anabanua</p>
+     </div><!-- Instruction -->
+     <p id="instruction" class="text-center text-base mb-8 text-white">Upload foto Anda dan download twibbon untuk dibagikan di media sosial!</p><!-- Preview Container -->
+     <div class="mb-8">
+      <div id="preview-container"><img id="user-photo" class="hidden" alt="Foto Anda"> <!-- 
+              GANTI LINK TEMPLATE TWIBBON DI BAWAH INI
+              Cara: Copy path file PNG template Anda, lalu paste di src=""
+              Contoh: src="./template-twibbon.png" atau src="https://example.com/twibbon.png"
+            --> <img id="twibbon-frame" src="./Twibbonppdb.png" alt="Frame Twibbon" onerror="this.src=''; this.alt='Template gagal dimuat. Pastikan file ada di folder yang sama dengan HTML ini.';">
+       <div id="placeholder" class="absolute inset-0 flex items-center justify-center text-center p-8 bg-gray-100">
+        <div><i class="fas fa-image text-6xl text-gray-400 mb-4"></i>
+         <p class="text-lg font-semibold text-gray-700">Upload Foto Anda</p>
+         <p class="text-sm text-gray-500 mt-2">Klik tombol di bawah untuk memilih foto</p>
+        </div>
+       </div>
+      </div>
+     </div><!-- Controls -->
+     <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-10"><input type="file" id="photo-input" accept="image/*" class="hidden"> <button id="upload-btn" class="px-6 py-3 rounded-lg font-semibold text-base shadow-md text-white bg-blue-600 hover:bg-blue-700 transition-colors"> <i class="fas fa-upload mr-2"></i><span id="upload-btn-text">Pilih Foto</span> </button> <button id="download-btn" class="hidden px-6 py-3 rounded-lg font-semibold text-base shadow-md text-white bg-green-600 hover:bg-green-700 transition-colors"> <i class="fas fa-download mr-2"></i><span id="download-btn-text">Download Twibbon</span> </button>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      background_gradient_start: '#ffbf00',
+      background_gradient_end: '#002899',
+      text_color: '#ffffff',
+      button_color: '#002899',
+      font_family: 'system-ui, -apple-system, sans-serif',
+      font_size: 16,
+      main_title: 'Selamat Datang Mahasiswa Baru',
+      subtitle: 'Universitas Indonesia 2024',
+      instruction_text: 'Upload foto Anda dan download twibbon untuk dibagikan di media sosial!',
+      upload_button_text: 'Pilih Foto',
+      download_button_text: 'Download Twibbon'
+    };
+
+    async function onConfigChange(config) {
+      const baseFontStack = 'system-ui, -apple-system, sans-serif';
+      const customFont = config.font_family || defaultConfig.font_family;
+      const baseSize = config.font_size || defaultConfig.font_size;
+      const bgGradientStart = config.background_gradient_start || defaultConfig.background_gradient_start;
+      const bgGradientEnd = config.background_gradient_end || defaultConfig.background_gradient_end;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const btnColor = config.button_color || defaultConfig.button_color;
+      
+      document.body.style.background = `linear-gradient(135deg, ${bgGradientStart} 0%, ${bgGradientEnd} 100%)`;
+      
+      const mainWrapper = document.getElementById('main-wrapper');
+      mainWrapper.style.fontFamily = `${customFont}, ${baseFontStack}`;
+      
+      const mainTitle = document.getElementById('main-title');
+      mainTitle.textContent = config.main_title || defaultConfig.main_title;
+      mainTitle.style.fontSize = `${baseSize * 2.5}px`;
+      mainTitle.style.color = textColor;
+      mainTitle.style.fontFamily = `${customFont}, ${baseFontStack}`;
+      
+      const subtitle = document.getElementById('subtitle');
+      subtitle.textContent = config.subtitle || defaultConfig.subtitle;
+      subtitle.style.fontSize = `${baseSize * 1.25}px`;
+      subtitle.style.color = textColor;
+      subtitle.style.fontFamily = `${customFont}, ${baseFontStack}`;
+      
+      const instruction = document.getElementById('instruction');
+      instruction.textContent = config.instruction_text || defaultConfig.instruction_text;
+      instruction.style.fontSize = `${baseSize}px`;
+      instruction.style.color = textColor;
+      instruction.style.fontFamily = `${customFont}, ${baseFontStack}`;
+      
+      const uploadBtn = document.getElementById('upload-btn');
+      uploadBtn.style.backgroundColor = btnColor;
+      
+      const uploadBtnText = document.getElementById('upload-btn-text');
+      uploadBtnText.textContent = config.upload_button_text || defaultConfig.upload_button_text;
+      
+      const downloadBtn = document.getElementById('download-btn');
+      downloadBtn.style.backgroundColor = btnColor;
+      
+      const downloadBtnText = document.getElementById('download-btn-text');
+      downloadBtnText.textContent = config.download_button_text || defaultConfig.download_button_text;
+      
+      const tipTexts = document.querySelectorAll('.space-y-3 p');
+      tipTexts.forEach(p => {
+        p.style.fontSize = `${baseSize}px`;
+        p.style.color = textColor;
+        p.style.fontFamily = `${customFont}, ${baseFontStack}`;
+      });
+      
+      const tipsHeading = document.querySelector('.mt-12 h3');
+      if (tipsHeading) {
+        tipsHeading.style.fontSize = `${baseSize * 1.25}px`;
+        tipsHeading.style.color = textColor;
+        tipsHeading.style.fontFamily = `${customFont}, ${baseFontStack}`;
+      }
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_gradient_start || defaultConfig.background_gradient_start,
+              set: (value) => {
+                window.elementSdk.config.background_gradient_start = value;
+                window.elementSdk.setConfig({ background_gradient_start: value });
+              }
+            },
+            {
+              get: () => config.background_gradient_end || defaultConfig.background_gradient_end,
+              set: (value) => {
+                window.elementSdk.config.background_gradient_end = value;
+                window.elementSdk.setConfig({ background_gradient_end: value });
+              }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => {
+                window.elementSdk.config.text_color = value;
+                window.elementSdk.setConfig({ text_color: value });
+              }
+            },
+            {
+              get: () => config.button_color || defaultConfig.button_color,
+              set: (value) => {
+                window.elementSdk.config.button_color = value;
+                window.elementSdk.setConfig({ button_color: value });
+              }
+            }
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => config.font_family || defaultConfig.font_family,
+            set: (value) => {
+              window.elementSdk.config.font_family = value;
+              window.elementSdk.setConfig({ font_family: value });
+            }
+          },
+          fontSizeable: {
+            get: () => config.font_size || defaultConfig.font_size,
+            set: (value) => {
+              window.elementSdk.config.font_size = value;
+              window.elementSdk.setConfig({ font_size: value });
+            }
+          }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['main_title', config.main_title || defaultConfig.main_title],
+          ['subtitle', config.subtitle || defaultConfig.subtitle],
+          ['instruction_text', config.instruction_text || defaultConfig.instruction_text],
+          ['upload_button_text', config.upload_button_text || defaultConfig.upload_button_text],
+          ['download_button_text', config.download_button_text || defaultConfig.download_button_text]
+        ])
+      });
+    }
+
+    const photoInput = document.getElementById('photo-input');
+    const uploadBtn = document.getElementById('upload-btn');
+    const downloadBtn = document.getElementById('download-btn');
+    const userPhoto = document.getElementById('user-photo');
+    const placeholder = document.getElementById('placeholder');
+
+    uploadBtn.addEventListener('click', () => {
+      photoInput.click();
+    });
+
+    photoInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          userPhoto.src = event.target.result;
+          userPhoto.classList.remove('hidden');
+          placeholder.classList.add('hidden');
+          downloadBtn.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    downloadBtn.addEventListener('click', async () => {
+      const container = document.getElementById('preview-container');
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      const size = 1000;
+      canvas.width = size;
+      canvas.height = size;
+      
+      const photoImg = new Image();
+      photoImg.src = userPhoto.src;
+      
+      await new Promise((resolve) => {
+        photoImg.onload = resolve;
+      });
+      
+      ctx.drawImage(photoImg, 0, 0, size, size);
+      
+      const frameImg = new Image();
+      frameImg.src = document.getElementById('twibbon-frame').src;
+      
+      await new Promise((resolve) => {
+        frameImg.onload = resolve;
+      });
+      
+      ctx.drawImage(frameImg, 0, 0, size, size);
+      
+      canvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'twibbon-mahasiswa-baru.png';
+        a.click();
+        URL.revokeObjectURL(url);
+      }, 'image/png');
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9acd94085580294b',t:'MTc2NTU0NjI0Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
