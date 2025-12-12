@@ -4,7 +4,7 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Twibbon PSB Mabash</title>
+  <title>Twibbon Generator</title>
   <script src="/_sdk/element_sdk.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -26,11 +26,10 @@
     
     #user-photo {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      top: 50%;
+      left: 50%;
+      transform-origin: center center;
+      max-width: none;
     }
     
     #twibbon-frame {
@@ -70,21 +69,39 @@
        </div>
       </div>
      </div><!-- Controls -->
-     <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-10"><input type="file" id="photo-input" accept="image/*" class="hidden"> <button id="upload-btn" class="px-6 py-3 rounded-lg font-semibold text-base shadow-md text-white bg-blue-600 hover:bg-blue-700 transition-colors"> <i class="fas fa-upload mr-2"></i><span id="upload-btn-text">Pilih Foto</span> </button> <button id="download-btn" class="hidden px-6 py-3 rounded-lg font-semibold text-base shadow-md text-white bg-green-600 hover:bg-green-700 transition-colors"> <i class="fas fa-download mr-2"></i><span id="download-btn-text">Download Twibbon</span> </button>
+     <div class="flex flex-col gap-4 justify-center items-center mb-10">
+      <div class="flex flex-col sm:flex-row gap-4"><input type="file" id="photo-input" accept="image/*" class="hidden"> <button id="upload-btn" class="px-6 py-3 rounded-lg font-semibold text-base shadow-md text-white bg-blue-600 hover:bg-blue-700 transition-colors"> <i class="fas fa-upload mr-2"></i><span id="upload-btn-text">Pilih Foto</span> </button> <button id="download-btn" class="hidden px-6 py-3 rounded-lg font-semibold text-base shadow-md text-white bg-green-600 hover:bg-green-700 transition-colors"> <i class="fas fa-download mr-2"></i><span id="download-btn-text">Download Twibbon</span> </button>
+      </div><!-- Photo Adjustment Controls -->
+      <div id="adjustment-controls" class="hidden w-full max-w-md bg-white rounded-lg shadow-sm p-6 mt-4">
+       <h3 class="font-bold text-lg mb-4 text-gray-800"><i class="fas fa-sliders-h mr-2"></i>Atur Posisi Foto</h3><!-- Zoom Control -->
+       <div class="mb-4"><label class="block text-sm font-medium text-gray-700 mb-2"> <i class="fas fa-search-plus mr-1"></i>Zoom </label> <input type="range" id="zoom-slider" min="50" max="200" value="100" class="w-full">
+        <div class="text-center text-sm text-gray-600 mt-1">
+         <span id="zoom-value">100</span>%
+        </div>
+       </div><!-- Position Controls -->
+       <div class="mb-4"><label class="block text-sm font-medium text-gray-700 mb-2"> <i class="fas fa-arrows-alt mr-1"></i>Posisi </label>
+        <div class="grid grid-cols-2 gap-3">
+         <div><label class="block text-xs text-gray-600 mb-1">Horizontal</label> <input type="range" id="position-x" min="-100" max="100" value="0" class="w-full">
+         </div>
+         <div><label class="block text-xs text-gray-600 mb-1">Vertikal</label> <input type="range" id="position-y" min="-100" max="100" value="0" class="w-full">
+         </div>
+        </div>
+       </div><!-- Reset Button --> <button id="reset-btn" class="w-full px-4 py-2 rounded-lg font-medium text-sm text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors"> <i class="fas fa-undo mr-2"></i>Reset Posisi </button>
+      </div>
      </div>
     </div>
    </div>
   </div>
   <script>
     const defaultConfig = {
-      background_gradient_start: '#ffbf00',
-      background_gradient_end: '#002899',
+      background_gradient_start: '#1c432c',
+      background_gradient_end: '#f5d746',
       text_color: '#ffffff',
-      button_color: '#002899',
+      button_color: '#1c432c',
       font_family: 'system-ui, -apple-system, sans-serif',
       font_size: 16,
-      main_title: 'Selamat Datang Mahasiswa Baru',
-      subtitle: 'Universitas Indonesia 2024',
+      main_title: '',
+      subtitle: '',
       instruction_text: 'Upload foto Anda dan download twibbon untuk dibagikan di media sosial!',
       upload_button_text: 'Pilih Foto',
       download_button_text: 'Download Twibbon'
@@ -133,20 +150,6 @@
       
       const downloadBtnText = document.getElementById('download-btn-text');
       downloadBtnText.textContent = config.download_button_text || defaultConfig.download_button_text;
-      
-      const tipTexts = document.querySelectorAll('.space-y-3 p');
-      tipTexts.forEach(p => {
-        p.style.fontSize = `${baseSize}px`;
-        p.style.color = textColor;
-        p.style.fontFamily = `${customFont}, ${baseFontStack}`;
-      });
-      
-      const tipsHeading = document.querySelector('.mt-12 h3');
-      if (tipsHeading) {
-        tipsHeading.style.fontSize = `${baseSize * 1.25}px`;
-        tipsHeading.style.color = textColor;
-        tipsHeading.style.fontFamily = `${customFont}, ${baseFontStack}`;
-      }
     }
 
     if (window.elementSdk) {
@@ -215,6 +218,49 @@
     const downloadBtn = document.getElementById('download-btn');
     const userPhoto = document.getElementById('user-photo');
     const placeholder = document.getElementById('placeholder');
+    const adjustmentControls = document.getElementById('adjustment-controls');
+    const zoomSlider = document.getElementById('zoom-slider');
+    const zoomValue = document.getElementById('zoom-value');
+    const positionX = document.getElementById('position-x');
+    const positionY = document.getElementById('position-y');
+    const resetBtn = document.getElementById('reset-btn');
+
+    let photoTransform = {
+      scale: 1,
+      x: 0,
+      y: 0
+    };
+
+    let photoAspectRatio = 1;
+    let containerSize = 0;
+
+    function updatePhotoTransform() {
+      const scalePercent = zoomSlider.value;
+      const scale = scalePercent / 100;
+      const x = positionX.value;
+      const y = positionY.value;
+      
+      photoTransform.scale = scale;
+      photoTransform.x = x;
+      photoTransform.y = y;
+      
+      // Hitung ukuran foto berdasarkan aspect ratio
+      let photoWidth, photoHeight;
+      if (photoAspectRatio > 1) {
+        // Landscape
+        photoWidth = containerSize;
+        photoHeight = containerSize / photoAspectRatio;
+      } else {
+        // Portrait atau square
+        photoHeight = containerSize;
+        photoWidth = containerSize * photoAspectRatio;
+      }
+      
+      userPhoto.style.width = photoWidth + 'px';
+      userPhoto.style.height = photoHeight + 'px';
+      userPhoto.style.transform = `translate(-50%, -50%) translate(${x}%, ${y}%) scale(${scale})`;
+      zoomValue.textContent = scalePercent;
+    }
 
     uploadBtn.addEventListener('click', () => {
       photoInput.click();
@@ -226,20 +272,47 @@
         const reader = new FileReader();
         reader.onload = (event) => {
           userPhoto.src = event.target.result;
-          userPhoto.classList.remove('hidden');
-          placeholder.classList.add('hidden');
-          downloadBtn.classList.remove('hidden');
+          
+          userPhoto.onload = () => {
+            // Hitung aspect ratio foto
+            photoAspectRatio = userPhoto.naturalWidth / userPhoto.naturalHeight;
+            
+            // Dapatkan ukuran container
+            const container = document.getElementById('preview-container');
+            containerSize = container.offsetWidth;
+            
+            userPhoto.classList.remove('hidden');
+            placeholder.classList.add('hidden');
+            downloadBtn.classList.remove('hidden');
+            adjustmentControls.classList.remove('hidden');
+            
+            // Reset transform
+            zoomSlider.value = 100;
+            positionX.value = 0;
+            positionY.value = 0;
+            updatePhotoTransform();
+          };
         };
         reader.readAsDataURL(file);
       }
     });
 
+    zoomSlider.addEventListener('input', updatePhotoTransform);
+    positionX.addEventListener('input', updatePhotoTransform);
+    positionY.addEventListener('input', updatePhotoTransform);
+
+    resetBtn.addEventListener('click', () => {
+      zoomSlider.value = 100;
+      positionX.value = 0;
+      positionY.value = 0;
+      updatePhotoTransform();
+    });
+
     downloadBtn.addEventListener('click', async () => {
-      const container = document.getElementById('preview-container');
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       
-      // Load foto user terlebih dahulu untuk mendapatkan dimensi aslinya
+      // Load foto user
       const photoImg = new Image();
       photoImg.src = userPhoto.src;
       
@@ -247,7 +320,7 @@
         photoImg.onload = resolve;
       });
       
-      // Load frame twibbon untuk mendapatkan dimensi aslinya
+      // Load frame twibbon
       const frameImg = new Image();
       frameImg.src = document.getElementById('twibbon-frame').src;
       
@@ -255,31 +328,43 @@
         frameImg.onload = resolve;
       });
       
-      // Gunakan ukuran yang lebih besar antara foto atau frame untuk kualitas terbaik
+      // Gunakan ukuran yang lebih besar untuk kualitas terbaik
       const targetSize = Math.max(photoImg.width, photoImg.height, frameImg.width, frameImg.height, 1080);
       
       canvas.width = targetSize;
       canvas.height = targetSize;
       
-      // Gambar foto user (dengan crop center untuk mempertahankan proporsi)
+      // Simpan context state
+      ctx.save();
+      
+      // Pindahkan origin ke tengah canvas
+      ctx.translate(targetSize / 2, targetSize / 2);
+      
+      // Aplikasikan transform
+      ctx.translate(
+        (photoTransform.x / 100) * targetSize,
+        (photoTransform.y / 100) * targetSize
+      );
+      ctx.scale(photoTransform.scale, photoTransform.scale);
+      
+      // Gambar foto dengan mempertahankan aspect ratio asli
+      let drawWidth, drawHeight;
       const photoAspect = photoImg.width / photoImg.height;
-      let drawWidth, drawHeight, offsetX, offsetY;
       
       if (photoAspect > 1) {
-        // Foto landscape
-        drawHeight = targetSize;
-        drawWidth = drawHeight * photoAspect;
-        offsetX = -(drawWidth - targetSize) / 2;
-        offsetY = 0;
-      } else {
-        // Foto portrait atau square
+        // Landscape
         drawWidth = targetSize;
-        drawHeight = drawWidth / photoAspect;
-        offsetX = 0;
-        offsetY = -(drawHeight - targetSize) / 2;
+        drawHeight = targetSize / photoAspect;
+      } else {
+        // Portrait atau square
+        drawHeight = targetSize;
+        drawWidth = targetSize * photoAspect;
       }
       
-      ctx.drawImage(photoImg, offsetX, offsetY, drawWidth, drawHeight);
+      ctx.drawImage(photoImg, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight);
+      
+      // Restore context state
+      ctx.restore();
       
       // Gambar frame twibbon di atas foto
       ctx.drawImage(frameImg, 0, 0, targetSize, targetSize);
@@ -294,5 +379,5 @@
       }, 'image/png');
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9acda03563b7fd15',t:'MTc2NTU0Njc0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ad0d0506034a131',t:'MTc2NTU4MDE3My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
